@@ -1,50 +1,33 @@
+
 <html><head><base href="." />
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>مشغل البث المتقدم - Multi-Player Solution</title>
+<title>مشغل البث المباشر - خالد دراغة</title>
 
-<!-- JW Player Enterprise -->
-<script src="https://cdn.jwplayer.com/libraries/YOUR_JW_KEY.js"></script>
+<!-- Plyr CSS -->
+<link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css">
 
-<!-- HLS.js with Encryption Support -->
+<!-- HLS.js for HLS streaming support -->
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
-<!-- VXG Player -->
-<link href="https://player.vxg.io/vxgplayer/vxgplayer.css" rel="stylesheet">
-<script src="https://player.vxg.io/vxgplayer/vxgplayer-1.8.89.min.js"></script>
-
-<!-- Clappr Player -->
-<script src="https://cdn.jsdelivr.net/npm/@clappr/player@latest/dist/clappr.min.js"></script>
-
-<!-- Shaka Player -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.3.6/shaka-player.compiled.js"></script>
-
-<!-- Video.js -->
-<link href="https://vjs.zencdn.net/8.5.2/video-js.css" rel="stylesheet">
-<script src="https://vjs.zencdn.net/8.5.2/video.min.js"></script>
-
-<!-- DashJS -->
-<script src="https://cdn.dashjs.org/latest/dash.all.min.js"></script>
-
-<!-- Plyr -->
-<link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css">
+<!-- Plyr Player -->
 <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
 
 <style>
     body {
-        background: #111;
-        color: white;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        direction: rtl;
         margin: 0;
         padding: 20px;
+        background: #0f0f0f;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: white;
+        direction: rtl;
     }
 
-    .player-container {
+    .container {
         max-width: 1200px;
         margin: 0 auto;
-        background: #1a1a1a;
         padding: 20px;
+        background: #1a1a1a;
         border-radius: 10px;
         box-shadow: 0 0 30px rgba(0,0,0,0.5);
     }
@@ -52,655 +35,113 @@
     .player-wrapper {
         position: relative;
         width: 100%;
-        aspect-ratio: 16/9;
-        margin-bottom: 20px;
-        background: #000;
         border-radius: 8px;
         overflow: hidden;
-    }
-
-    .player-selector {
         margin-bottom: 20px;
-        padding: 15px;
-        background: #2a2a2a;
-        border-radius: 8px;
     }
 
-    .control-panel {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 15px;
-        margin-top: 20px;
+    video {
+        width: 100%;
+        height: 100%;
     }
 
-    .btn {
-        background: #0066cc;
-        color: white;
-        border: none;
-        padding: 12px 20px;
-        border-radius: 5px;
-        cursor: pointer;
-        font-weight: bold;
-        transition: background 0.3s;
-    }
-
-    .btn:hover {
-        background: #0052a3;
-    }
-
-    .status {
-        background: #2a2a2a;
-        padding: 15px;
-        border-radius: 8px;
-        margin-top: 20px;
-    }
-
-    .status-indicator {
-        display: inline-block;
-        width: 12px;
-        height: 12px;
-        border-radius: 50%;
-        margin-left: 8px;
-    }
-
-    .status-good { background: #00ff95; }
-    .status-warning { background: #ffaa00; }
-    .status-error { background: #ff4444; }
-
-    select {
-        padding: 10px;
-        border-radius: 5px;
-        background: #333;
-        color: white;
-        border: 1px solid #444;
-    }
-
-    .debug-panel {
-        margin-top: 20px;
-        padding: 15px;
-        background: #2a2a2a;
-        border-radius: 8px;
-        font-family: monospace;
-        font-size: 12px;
-        max-height: 150px;
-        overflow-y: auto;
-    }
-
-    .copyright {
-        margin-top: 20px;
+    h1 {
         text-align: center;
+        margin-bottom: 20px;
+        color: #fff;
+    }
+
+    .footer {
+        text-align: center;
+        margin-top: 20px;
         padding: 15px;
         border-top: 1px solid #333;
         color: #888;
-        font-size: 14px;
+    }
+
+    /* Custom Plyr theme */
+    .plyr--full-ui input[type=range] {
+        color: #00ff95;
+    }
+
+    .plyr--video .plyr__control--overlaid {
+        background: rgba(0, 255, 149, 0.9);
+    }
+
+    .plyr--video .plyr__control:hover {
+        background: #00ff95;
     }
 </style>
 </head>
 <body>
-    <div class="player-container">
-        <h2>مشغل البث المتقدم متعدد المحركات</h2>
+    <div class="container">
+        <h1>بث مباشر</h1>
         
-        <div class="player-selector">
-            <select id="playerType">
-                <option value="plyr">Plyr Player</option>
-                <option value="jwplayer">JW Player Enterprise</option>
-                <option value="hls">HLS.js مع دعم التشفير</option>
-                <option value="vxg">VXG Player</option>
-                <option value="clappr">Clappr Player</option>
-                <option value="shaka">Shaka Player</option>
-                <option value="videojs">Video.js Player</option>
-                <option value="dashjs">Dash.js Player</option>
-            </select>
+        <div class="player-wrapper">
+            <video id="player" playsinline controls crossorigin>
+                <source src="https://c3.yallachoots.online/hls/0/stream.m3u8" type="application/x-mpegURL">
+            </video>
         </div>
 
-        <div class="player-wrapper" id="playerWrapper">
-            <!-- Players will be injected here -->
-        </div>
-
-        <div class="control-panel">
-            <button class="btn" id="startBtn">بدء البث</button>
-            <button class="btn" id="stopBtn">إيقاف البث</button>
-            <button class="btn" id="refreshBtn">تحديث البث</button>
-            <select id="qualitySelector">
-                <option value="auto">جودة تلقائية</option>
-                <option value="high">جودة عالية</option>
-                <option value="medium">جودة متوسطة</option>
-                <option value="low">جودة منخفضة</option>
-            </select>
-        </div>
-
-        <div class="status">
-            <div>حالة البث: <span class="status-indicator" id="streamStatus"></span> <span id="statusText">جاري التحميل...</span></div>
-            <div>جودة الاتصال: <span id="connectionQuality">-</span></div>
-            <div>معدل البت: <span id="bitrate">-</span></div>
-        </div>
-
-        <div class="debug-panel" id="debugPanel"></div>
-        
-        <div class="copyright">
-            جميع حقوق البث محفوظة © خالد دراغة 2024
+        <div class="footer">
+            جميع الحقوق محفوظة © خالد دراغة 2024
         </div>
     </div>
 
     <script>
-class StreamPlayerManager {
-    constructor() {
-        this.streamUrl = 'https://c3.yallachoots.online/hls/0/stream.m3u8';
-        this.currentPlayer = null;
-        this.playerType = null;
-        this.initializeEventListeners();
-        this.debugLog = [];
-    }
+        document.addEventListener('DOMContentLoaded', function() {
+            const video = document.getElementById('player');
+            const streamUrl = 'https://c3.yallachoots.online/hls/0/stream.m3u8';
 
-    initializeEventListeners() {
-        document.getElementById('playerType').addEventListener('change', (e) => this.switchPlayer(e.target.value));
-        document.getElementById('startBtn').addEventListener('click', () => this.startStream());
-        document.getElementById('stopBtn').addEventListener('click', () => this.stopStream());
-        document.getElementById('refreshBtn').addEventListener('click', () => this.refreshStream());
-        document.getElementById('qualitySelector').addEventListener('change', (e) => this.setQuality(e.target.value));
-    }
-
-    log(message) {
-        const debugPanel = document.getElementById('debugPanel');
-        this.debugLog.push(`${new Date().toISOString()} - ${message}`);
-        if (this.debugLog.length > 50) this.debugLog.shift();
-        debugPanel.innerHTML = this.debugLog.join('<br>');
-        debugPanel.scrollTop = debugPanel.scrollHeight;
-    }
-
-    async switchPlayer(type) {
-        this.stopStream();
-        this.playerType = type;
-        const wrapper = document.getElementById('playerWrapper');
-        wrapper.innerHTML = '';
-
-        try {
-            switch (type) {
-                case 'jwplayer':
-                    await this.initJWPlayer();
-                    break;
-                case 'hls':
-                    await this.initHLSPlayer();
-                    break;
-                case 'vxg':
-                    await this.initVXGPlayer();
-                    break;
-                case 'clappr':
-                    await this.initClapprPlayer();
-                    break;
-                case 'shaka':
-                    await this.initShakaPlayer();
-                    break;
-                case 'videojs':
-                    await this.initVideoJSPlayer();
-                    break;
-                case 'dashjs':
-                    await this.initDashJSPlayer();
-                    break;
-                case 'plyr':
-                    await this.initPlyrPlayer();
-                    break;
-            }
-            this.log(`تم التبديل إلى ${type}`);
-        } catch (error) {
-            this.log(`خطأ في تبديل المشغل: ${error.message}`);
-            this.updateStatus('error', 'فشل في تهيئة المشغل');
-        }
-    }
-
-    async initJWPlayer() {
-        const playerDiv = document.createElement('div');
-        playerDiv.id = 'jwPlayer';
-        document.getElementById('playerWrapper').appendChild(playerDiv);
-
-        this.currentPlayer = jwplayer('jwPlayer').setup({
-            file: this.streamUrl,
-            type: 'hls',
-            width: '100%',
-            height: '100%',
-            hlshtml: true,
-            primary: 'html5',
-            autostart: false,
-            controls: true,
-            stretching: 'uniform',
-            encryption: {
-                token: await this.getStreamToken()
-            }
-        });
-
-        this.currentPlayer.on('error', (e) => {
-            this.log(`JW Player error: ${e.message}`);
-            this.updateStatus('error', 'خطأ في التشغيل');
-        });
-    }
-
-    async initHLSPlayer() {
-        const video = document.createElement('video');
-        video.id = 'hlsPlayer';
-        video.controls = true;
-        video.style.width = '100%';
-        video.style.height = '100%';
-        document.getElementById('playerWrapper').appendChild(video);
-
-        if (Hls.isSupported()) {
-            const hls = new Hls({
-                debug: true,
-                enableWorker: true,
-                lowLatencyMode: true,
-                backBufferLength: 90,
-                maxBufferLength: 30,
-                maxMaxBufferLength: 600,
-                maxBufferSize: 60 * 1000 * 1000,
-                maxBufferHole: 0.5,
-                progressive: true
+            // Initialize Plyr
+            const player = new Plyr(video, {
+                controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'captions', 'settings', 'pip', 'airplay', 'fullscreen'],
+                autoplay: true,
+                muted: true,
+                loadSprite: true,
             });
 
-            hls.loadSource(this.streamUrl);
-            hls.attachMedia(video);
-            this.currentPlayer = hls;
-
-            hls.on(Hls.Events.ERROR, (event, data) => {
-                this.log(`HLS.js error: ${data.type} - ${data.details}`);
-                this.handleHLSError(data);
-            });
-        }
-    }
-
-    async initVXGPlayer() {
-        const playerDiv = document.createElement('div');
-        playerDiv.id = 'vxgPlayer';
-        document.getElementById('playerWrapper').appendChild(playerDiv);
-
-        this.currentPlayer = new VXGPlayer('vxgPlayer', {
-            url: this.streamUrl,
-            autostart: false,
-            aspectRatio: '16:9',
-            decreaseBufferOS: true,
-            bufferTime: 300,
-            debug: true,
-            token: await this.getStreamToken()
-        });
-
-        this.currentPlayer.onError((error) => {
-            this.log(`VXG Player error: ${error}`);
-            this.updateStatus('error', 'خطأ في التشغيل');
-        });
-    }
-
-    async initClapprPlayer() {
-        const playerDiv = document.createElement('div');
-        playerDiv.id = 'clapprPlayer';
-        document.getElementById('playerWrapper').appendChild(playerDiv);
-
-        this.currentPlayer = new Clappr.Player({
-            source: this.streamUrl,
-            parentId: '#clapprPlayer',
-            width: '100%',
-            height: '100%',
-            autoPlay: false,
-            hlsMinimumDvrSize: 60,
-            hlsjsConfig: {
-                enableWorker: true,
-                lowLatencyMode: true,
-                backBufferLength: 90,
-                maxBufferLength: 30,
-                maxBufferSize: 60 * 1000 * 1000,
-            },
-            events: {
-                onError: (error) => {
-                    this.log(`Clappr Player error: ${error}`);
-                    this.updateStatus('error', 'خطأ في التشغيل');
-                }
-            }
-        });
-    }
-
-    async initShakaPlayer() {
-        const video = document.createElement('video');
-        video.id = 'shakaPlayer';
-        video.controls = true;
-        video.style.width = '100%';
-        video.style.height = '100%';
-        document.getElementById('playerWrapper').appendChild(video);
-
-        const player = new shaka.Player(video);
-        await player.load(this.streamUrl);
-        this.currentPlayer = player;
-
-        player.addEventListener('error', (error) => {
-            this.log(`Shaka Player error: ${error.detail}`);
-            this.updateStatus('error', 'خطأ في التشغيل');
-        });
-    }
-
-    async initVideoJSPlayer() {
-        const video = document.createElement('video');
-        video.className = 'video-js vjs-default-skin';
-        video.id = 'videojsPlayer';
-        document.getElementById('playerWrapper').appendChild(video);
-
-        this.currentPlayer = videojs('videojsPlayer', {
-            controls: true,
-            autoplay: false,
-            preload: 'auto',
-            fluid: true,
-            html5: {
-                hls: {
-                    enableLowInitialPlaylist: true,
-                    smoothQualityChange: true,
-                    overrideNative: true
-                }
-            },
-            sources: [{
-                src: this.streamUrl,
-                type: 'application/x-mpegURL'
-            }]
-        });
-
-        this.currentPlayer.on('error', (error) => {
-            this.log(`Video.js error: ${error.message}`);
-            this.updateStatus('error', 'خطأ في التشغيل');
-        });
-    }
-
-    async initDashJSPlayer() {
-        const video = document.createElement('video');
-        video.id = 'dashjsPlayer';
-        video.controls = true;
-        video.style.width = '100%';
-        video.style.height = '100%';
-        document.getElementById('playerWrapper').appendChild(video);
-
-        const player = dashjs.MediaPlayer().create();
-        player.initialize(video, this.streamUrl, false);
-        player.updateSettings({
-            streaming: {
-                lowLatencyEnabled: true,
-                abr: {
-                    useDefaultABRRules: true,
-                    autoSwitchBitrate: {
-                        video: true,
-                        audio: true
-                    }
-                }
-            }
-        });
-        
-        this.currentPlayer = player;
-    }
-
-    async initPlyrPlayer() {
-        const video = document.createElement('video');
-        video.id = 'plyrPlayer';
-        video.controls = true;
-        video.crossOrigin = 'anonymous';
-        video.autoplay = true; // Enable autoplay
-        video.muted = true; // Required for autoplay to work in most browsers
-        video.playsInline = true; // Better mobile support
-        document.getElementById('playerWrapper').appendChild(video);
-
-        if (Hls.isSupported()) {
-            const hls = new Hls({
-                enableWorker: true,
-                lowLatencyMode: true,
-                backBufferLength: 90,
-                maxBufferLength: 30
-            });
-            hls.loadSource(this.streamUrl);
-            hls.attachMedia(video);
-            
-            hls.on(Hls.Events.MANIFEST_PARSED, () => {
-                video.play().catch(e => {
-                    this.log(`Autoplay failed: ${e.message}`);
+            // Initialize HLS if supported
+            if (Hls.isSupported()) {
+                const hls = new Hls({
+                    debug: false,
+                    enableWorker: true,
+                    lowLatencyMode: true,
+                    backBufferLength: 90,
+                    maxBufferLength: 30,
+                    maxMaxBufferLength: 600,
+                    maxBufferSize: 60 * 1000 * 1000,
+                    maxBufferHole: 0.5,
+                    progressive: true
                 });
-            });
-        }
 
-        this.currentPlayer = new Plyr(video, {
-            controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'settings', 'fullscreen'],
-            settings: ['quality', 'speed'],
-            autoplay: true
-        });
+                hls.loadSource(streamUrl);
+                hls.attachMedia(video);
 
-        this.currentPlayer.on('error', (error) => {
-            this.log(`Plyr error: ${error}`);
-            this.updateStatus('error', 'خطأ في التشغيل');
-        });
+                hls.on(Hls.Events.MANIFEST_PARSED, function() {
+                    video.play()
+                        .then(() => {
+                            console.log("Playback started");
+                        })
+                        .catch(e => {
+                            console.error("Autoplay failed:", e);
+                        });
+                });
 
-        // Start stream automatically after initialization
-        setTimeout(() => this.startStream(), 1000);
-    }
-
-    async getStreamToken() {
-        try {
-            const response = await fetch('https://your-auth-server/token', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-            const data = await response.json();
-            return data.token;
-        } catch (error) {
-            this.log('فشل في الحصول على رمز المصادقة');
-            throw error;
-        }
-    }
-
-    async startStream() {
-        try {
-            switch (this.playerType) {
-                case 'jwplayer':
-                    this.currentPlayer.play();
-                    break;
-                case 'hls':
-                    document.getElementById('hlsPlayer').play();
-                    break;
-                case 'vxg':
-                    this.currentPlayer.play();
-                    break;
-                case 'clappr':
-                    this.currentPlayer.play();
-                    break;
-                case 'shaka':
-                    this.currentPlayer.play();
-                    break;
-                case 'videojs':
-                    this.currentPlayer.play();
-                    break;
-                case 'dashjs':
-                    this.currentPlayer.play();
-                    break;
-                case 'plyr':
-                    this.currentPlayer.play();
-                    break;
-            }
-            this.updateStatus('good', 'جاري البث');
-            this.startMonitoring();
-        } catch (error) {
-            this.log(`خطأ في بدء البث: ${error.message}`);
-            this.updateStatus('error', 'فشل في بدء البث');
-        }
-    }
-
-    stopStream() {
-        try {
-            if (!this.currentPlayer) return;
-            switch (this.playerType) {
-                case 'jwplayer':
-                    this.currentPlayer.stop();
-                    break;
-                case 'hls':
-                    document.getElementById('hlsPlayer').pause();
-                    this.currentPlayer.stopLoad();
-                    break;
-                case 'vxg':
-                    this.currentPlayer.stop();
-                    break;
-                case 'clappr':
-                    this.currentPlayer.stop();
-                    break;
-                case 'shaka':
-                    this.currentPlayer.stop();
-                    break;
-                case 'videojs':
-                    this.currentPlayer.pause();
-                    break;
-                case 'dashjs':
-                    this.currentPlayer.stop();
-                    break;
-                case 'plyr':
-                    this.currentPlayer.pause();
-                    break;
-            }
-            this.updateStatus('warning', 'تم إيقاف البث');
-            this.stopMonitoring();
-        } catch (error) {
-            this.log(`خطأ في إيقاف البث: ${error.message}`);
-        }
-    }
-
-    refreshStream() {
-        this.stopStream();
-        setTimeout(() => this.startStream(), 1000);
-    }
-
-    setQuality(quality) {
-        try {
-            switch (this.playerType) {
-                case 'jwplayer':
-                    const levels = this.currentPlayer.getQualityLevels();
-                    const levelIndex = quality === 'auto' ? -1 : levels.findIndex(level => 
-                        level.label.toLowerCase().includes(quality));
-                    this.currentPlayer.setCurrentQuality(levelIndex);
-                    break;
-                case 'hls':
-                    if (this.currentPlayer) {
-                        this.currentPlayer.currentLevel = quality === 'auto' ? -1 : 
-                            this.currentPlayer.levels.findIndex(level => 
-                                this.getQualityLabel(level.height) === quality);
+                hls.on(Hls.Events.ERROR, function(event, data) {
+                    if (data.fatal) {
+                        switch(data.type) {
+                            case Hls.ErrorTypes.NETWORK_ERROR:
+                                hls.startLoad();
+                                break;
+                            case Hls.ErrorTypes.MEDIA_ERROR:
+                                hls.recoverMediaError();
+                                break;
+                        }
                     }
-                    break;
-                case 'vxg':
-                    this.currentPlayer.setQuality(quality);
-                    break;
-                case 'shaka':
-                    // Shaka Streaming Quality settings if applicable
-                    break;
-                case 'videojs':
-                    // Video.js Quality settings if applicable
-                    break;
-                case 'dashjs':
-                    // Dash.js Quality settings if applicable
-                    break;
-                case 'plyr':
-                    // Plyr Quality settings if applicable
-                    break;
+                });
             }
-            this.log(`تم تغيير الجودة إلى ${quality}`);
-        } catch (error) {
-            this.log(`خطأ في تغيير الجودة: ${error.message}`);
-        }
-    }
-
-    updateStatus(type, message) {
-        const indicator = document.getElementById('streamStatus');
-        const statusText = document.getElementById('statusText');
-        
-        indicator.className = `status-indicator status-${type}`;
-        statusText.textContent = message;
-    }
-
-    startMonitoring() {
-        this.monitoringInterval = setInterval(() => {
-            this.updateMetrics();
-        }, 1000);
-    }
-
-    stopMonitoring() {
-        if (this.monitoringInterval) {
-            clearInterval(this.monitoringInterval);
-        }
-    }
-
-    updateMetrics() {
-        try {
-            let bitrate = '-';
-            let quality = '-';
-
-            switch (this.playerType) {
-                case 'jwplayer':
-                    const qLevel = this.currentPlayer.getCurrentQuality();
-                    bitrate = this.currentPlayer.getBitrateList()[qLevel]?.bandwidth || '-';
-                    quality = this.currentPlayer.getQualityLevels()[qLevel]?.label || '-';
-                    break;
-                case 'hls':
-                    if (this.currentPlayer.currentLevel >= 0) {
-                        const level = this.currentPlayer.levels[this.currentPlayer.currentLevel];
-                        bitrate = level?.bitrate || '-';
-                        quality = `${level?.height}p` || '-';
-                    }
-                    break;
-                case 'vxg':
-                    const stats = this.currentPlayer.getStats();
-                    bitrate = stats.bitrate || '-';
-                    quality = stats.resolution || '-';
-                    break;
-                case 'shaka':
-                    // Shaka bitrates if available
-                    break;
-                case 'videojs':
-                    // Video.js bitrates if available
-                    break;
-                case 'dashjs':
-                    // Dash.js bitrates if available
-                    break;
-                case 'plyr':
-                    // Plyr bitrates if available
-                    break;
-            }
-
-            document.getElementById('bitrate').textContent = 
-                typeof bitrate === 'number' ? `${Math.round(bitrate / 1024)} Kbps` : bitrate;
-            document.getElementById('connectionQuality').textContent = quality;
-
-        } catch (error) {
-            this.log(`خطأ في تحديث المقاييس: ${error.message}`);
-        }
-    }
-
-    handleHLSError(data) {
-        if (data.fatal) {
-            switch (data.type) {
-                case Hls.ErrorTypes.NETWORK_ERROR:
-                    this.log('محاولة إعادة الاتصال...');
-                    this.currentPlayer.startLoad();
-                    break;
-                case Hls.ErrorTypes.MEDIA_ERROR:
-                    this.log('محاولة إصلاح الوسائط...');
-                    this.currentPlayer.recoverMediaError();
-                    break;
-                default:
-                    this.log('خطأ غير قابل للإصلاح');
-                    this.stopStream();
-                    break;
-            }
-            this.updateStatus('error', 'خطأ في البث');
-        }
-    }
-
-    getQualityLabel(height) {
-        if (height >= 1080) return 'high';
-        if (height >= 720) return 'medium';
-        return 'low';
-    }
-}
-
-// Initialize the player manager when the page loads
-document.addEventListener('DOMContentLoaded', () => {
-    window.playerManager = new StreamPlayerManager();
-    window.playerManager.switchPlayer('plyr'); // Start with Plyr by default
-});
+        });
     </script>
 </body>
 </html>
